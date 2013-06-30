@@ -5,11 +5,9 @@
     <input id="input-bonus" class="input-block-level" type="text" placeholder="#标签 成就的简单描述 金额(整数)">
 
     <ul id="bonus-list" class="nav nav-list">
-        <li><a href="#"><span class="label label-success">python</span><span>content ..</span><span class="badge badge-success pull-right">5</span></a></li>
-        <li><a href="#"><span class="label label-success">python</span><span>content ..</span><span class="badge badge-success pull-right">5</span></a></li>
-        <li><a href="#"><span class="label label-success">python</span><span>content ..</span><span class="badge badge-success pull-right">5</span></a></li>
-        <li><a href="#"><span class="label label-success">python</span><span>content ..</span><span class="badge badge-success pull-right">5</span></a></li>
-        <li><a href="#"><span class="label label-success">python</span><span>content ..</span><span class="badge badge-success pull-right">5</span></a></li>
+      {% for bonus in bonus_list | reverse %}
+        {% include '_bonus.html' %}
+      {% endfor %}
     </ul>
 </div>
 {% endblock %}
