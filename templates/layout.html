@@ -4,6 +4,11 @@
         <meta charset="utf-8" />
         <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" type="text/css" />
         <link rel="stylesheet" href="{{ url_for('static', filename='css/application.css') }}" type="text/css" />
+        <script type="text/javascript">
+            function url_for(endpoint) {
+                return '{{ request.url_root }}' + endpoint;
+            }
+        </script>
     </head>
     <body>
         <div class="navbar navbar-fixed-top">
@@ -17,5 +22,8 @@
         <div class="container">
             {% block content %}{% endblock %}
         </div>        
+
+        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-2.0.2.min.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='js/application.js') }}"></script>
     </body>
 </html>
