@@ -2,7 +2,7 @@
 
 import uuid, json
 
-from flask import Flask, request, render_template, url_for, jsonify
+from flask import Flask, request, render_template, make_response, url_for, jsonify
 from sae.kvdb import KVClient
 
 app = Flask(__name__)
@@ -23,5 +23,7 @@ def add_bonus():
 
     kv.add(bonus_key, bonus_value)
 
-    return render_template('add_bonus.js')
+    response = make_response(render_template('add_bonus.js'))
+    response.headers['Content-Type'] = 'text/javascript'
+    return response
     
