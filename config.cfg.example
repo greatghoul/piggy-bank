@@ -1,0 +1,5 @@
+DEBUG = True
+
+# 新浪徽博授权
+APP_KEY = 'your key here'
+APP_SECRET = 'your secret here'
