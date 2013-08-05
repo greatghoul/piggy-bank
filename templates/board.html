@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="content well">
+    <input id="input-bonus" class="input-block-level" type="text" placeholder="#标签 成就的简单描述 金额(整数)">
+
+    <ul id="bonus-list" class="nav nav-list">
+      {% for bonus in bonus_list | reverse %}
+        {% include '_bonus.html' %}
+      {% endfor %}
+    </ul>
+</div>
+{% endblock %}

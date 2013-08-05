@@ -1,29 +1,38 @@
 <!doctype html>
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" type="text/css" />
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/application.css') }}" type="text/css" />
-        <script type="text/javascript">
-            function url_for(endpoint) {
-                return '{{ request.url_root }}' + endpoint;
-            }
-        </script>
-    </head>
-    <body>
-        <div class="navbar navbar-fixed-top">
-            <div class="navbar-inner">
-                <div class="container">
-                    <a class="brand" href="#">小猪存钱罐</a>
-                </div>
-            </div>
-        </div>
-
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" type="text/css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/application.css') }}" type="text/css" />
+    <script type="text/javascript">
+      function url_for(endpoint) {
+        return '{{ request.url_root }}' + endpoint;
+      }
+    </script>
+  </head>
+  <body>
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
         <div class="container">
-            {% block content %}{% endblock %}
-        </div>        
+          <a class="brand" href="#">小猪存钱罐</a>
 
-        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-2.0.2.min.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/application.js') }}"></script>
-    </body>
+          <ul class="nav pull-right">
+            {%- if 'name' in session %}
+            <li class="navbar-text">{{ session['name'] }}</li>
+            <li><a href="{{ url_for('logout') }}">退出</a></li>
+            {%- else %}
+            <li><a href="{{ url_for('login') }}">使用微博登陆</a></li>
+            {%- endif %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      {% block content %}{% endblock %}
+    </div>        
+
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-2.0.2.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/application.js') }}"></script>
+  </body>
 </html>
