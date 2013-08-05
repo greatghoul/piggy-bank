@@ -37,6 +37,7 @@ def login_ok(f):
 
 @app.route('/', methods=['GET'])
 def home():
+    app.logger.info(client.users.show.get(access_token=session['oauth_access_token'], uid='1904178193'))
     bonus_list = [bonus for _, bonus in kv.get_by_prefix('bonus-greatghoul')]
     return render_template('index.html', bonus_list=bonus_list)
 
@@ -65,8 +66,10 @@ def callback():
     code = request.args.get('code')
     auth = client.request_access_token(code)
     access_token = auth.access_token
+    session['oauth_access_token'] = access_token
     expires_in = auth.expires_in
     client.set_access_token(access_token, expires_in)
+    return redirect(url_for('home'))
 
 @app.route('/logout')
 def logout():
