@@ -2,6 +2,8 @@
 
 import os, re, datetime, time, json
 
+from functools import wraps
+
 from sae.kvdb import KVClient
 from weibo import APIClient 
 
@@ -28,23 +30,30 @@ def get_referer():
     return request.headers.get('HTTP_REFERER', url_for('home'))
 
 
-def login_ok(f):
-    def login_wrapper(*args, **kw):
-        if 'oauth_access_token' not in session:
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'access_token' not in session:
             return redirect(url_for('login'))
-        return f(*args, **kw)
-    return login_wrapper
+
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route('/', methods=['GET'])
 def home():
-    app.logger.info(client.users.show.get(access_token=session['oauth_access_token'], uid='1904178193'))
-    bonus_list = [bonus for _, bonus in kv.get_by_prefix('bonus-greatghoul')]
-    return render_template('index.html', bonus_list=bonus_list)
+    return render_template('index.html')
+
+@app.route('/board', methods=['GET'])
+@login_required
+def board():
+    bonus_list = [bonus for _, bonus in kv.get_by_prefix('bonus-%s' % session['uid'])]
+    return render_template('board.html', bonus_list=bonus_list)
 
 @app.route('/bonus', methods=['POST'])
+@login_required
 def add_bonus():
     timestamp = time.time()
-    bonus_key = 'bonus-greatghoul-%i' % (1000 * timestamp)
+    bonus_key = str('bonus-%s-%i' % (session['uid'], 1000 * timestamp))
     bonus = dict(label=request.form.get('label'),
                  content=request.form.get('content'),
                  bonus=int(request.form.get('bonus')),
@@ -65,13 +74,26 @@ def login():
 def callback():
     code = request.args.get('code')
     auth = client.request_access_token(code)
+
     access_token = auth.access_token
-    session['oauth_access_token'] = access_token
+    uid = auth.uid
     expires_in = auth.expires_in
     client.set_access_token(access_token, expires_in)
-    return redirect(url_for('home'))
+    app.logger.info('User %s logged in with access_token: %s and code: %s', uid, access_token, code)
+
+    user = client.users.show.get(access_token=access_token, uid=uid)
+    kv.set('user-%s', user) 
+    session['access_token'] = access_token
+    session['uid'] = uid 
+    session['name'] = user['name'] 
+    app.logger.info('User %s is updated', uid)
+
+    return redirect(url_for('board'))
 
 @app.route('/logout')
+@login_required
 def logout():
-    del session['oauth_access_token']
-    return redirect(get_referer())
+    del session['access_token']
+    del session['uid']
+    del session['name']
+    return redirect(url_for('home'))
