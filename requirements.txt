@@ -1,3 +1,4 @@
 -i http://pypi.douban.com/simple
 Flask
 sinaweibopy
+sae-python-dev
