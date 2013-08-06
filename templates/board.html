@@ -1,13 +1,24 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-<div class="content well">
+<div class="row-fluid">
+  <div class="well span4">
+    <input id="input-target" class="input-block-level" type="text" placeholder="目标名字 金额(整数)">
+
+    <ul id="target-list" class="nav nav-list">
+      {% for target in target_list | reverse %}
+      {% include '_target.html' %}
+      {% endfor %}
+    </ul>
+  </div>
+  <div class="well span8">
     <input id="input-bonus" class="input-block-level" type="text" placeholder="#标签 成就的简单描述 金额(整数)">
 
     <ul id="bonus-list" class="nav nav-list">
       {% for bonus in bonus_list | reverse %}
-        {% include '_bonus.html' %}
+      {% include '_bonus.html' %}
       {% endfor %}
     </ul>
+  </div>
 </div>
 {% endblock %}

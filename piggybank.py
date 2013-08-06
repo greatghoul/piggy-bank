@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os, re, datetime, time, json
+import os, re, datetime, time, json, logging
 
 from functools import wraps
 
@@ -14,6 +14,12 @@ from filters import escapejs, dateformat
 instance_path = os.path.dirname(__file__)
 
 app = Flask(__name__)
+
+# 配置日志
+app.debug_log_format = '[%(levelname)s] %(message)s'
+app.logger.setLevel(logging.INFO)
+logger = app.logger
+
 app.config.from_pyfile(os.path.join(instance_path, 'config.cfg'), silent=True)
 
 app.jinja_env.filters['escapejs'] = escapejs
@@ -46,8 +52,30 @@ def home():
 @app.route('/board', methods=['GET'])
 @login_required
 def board():
-    bonus_list = [bonus for _, bonus in kv.get_by_prefix('bonus-%s' % session['uid'])]
-    return render_template('board.html', bonus_list=bonus_list)
+    uid = session['uid']
+    logger.info("Fetching targets and bonuses for user %s ...", uid)
+    target_list = [target for _, target in kv.get_by_prefix('target-%s' % uid)]
+    logger.info("  %s targets loaded.", len(target_list))
+    bonus_list = [bonus for _, bonus in kv.get_by_prefix('bonus-%s' % uid)]
+    logger.info("  %s bonuses loaded.", len(bonus_list))
+    return render_template('board.html', target_list=target_list, bonus_list=bonus_list)
+
+@app.route('/target', methods=['POST'])
+@login_required
+def add_target():
+    logger.info("Creating target %(name)s with price %(price)s", request.form)
+    timestamp = time.time()
+    target_key = str('target-%s-%i' % (session['uid'], 1000 * timestamp))
+    target = dict(name=request.form.get('name'),
+                 price=int(request.form.get('price')),
+                 timestamp=datetime.datetime.fromtimestamp(timestamp))
+
+    kv.add(target_key, target)
+    logger.info("Target saved with key: %s", target_key)
+
+    response = make_response(render_template('add_target.js', target=target))
+    response.headers['Content-Type'] = 'text/javascript'
+    return response
 
 @app.route('/bonus', methods=['POST'])
 @login_required
