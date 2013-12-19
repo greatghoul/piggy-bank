@@ -2,12 +2,20 @@
 
 {% block content %}
 <div class="content well">
-    <input id="input-bonus" class="input-block-level" type="text" placeholder="#标签 成就的简单描述 金额(整数)">
+  <form name="form-add-bonus">
+    <input class="input-block-level" type="text" placeholder="#标签 成就的简单描述 金额(整数)" ng-model="source" />
+  </form>
 
-    <ul id="bonus-list" class="nav nav-list">
-      {% for bonus in bonus_list | reverse %}
-        {% include '_bonus.html' %}
-      {% endfor %}
-    </ul>
+  {% raw %}
+  <ul id="bonus-list" class="nav nav-list">
+    <li ng-repeat="bonus in bonuses">
+    <a href="#">
+      <span class="label label-success">{{bonus.label}}</span>
+      <span>{{bonus.content}}</span>
+      <span class="text-success pull-right"><strong>{{bonus.bonus}} 元</strong></span>
+    </a>
+    </li>
+  </ul>
+  {% endraw %}
 </div>
 {% endblock %}

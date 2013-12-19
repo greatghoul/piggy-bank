@@ -37,9 +37,12 @@ def login_ok(f):
 
 @app.route('/', methods=['GET'])
 def home():
-    app.logger.info(client.users.show.get(access_token=session['oauth_access_token'], uid='1904178193'))
-    bonus_list = [bonus for _, bonus in kv.get_by_prefix('bonus-greatghoul')]
-    return render_template('index.html', bonus_list=bonus_list)
+    return render_template('index.html')
+
+@app.route('/bonuses/', methods=['GET'])
+def bonus_list():
+    bonuses = [bonus for _, bonus in kv.get_by_prefix('bonus-greatghoul')]
+    return jsonify(bonuses)
 
 @app.route('/bonus', methods=['POST'])
 def add_bonus():

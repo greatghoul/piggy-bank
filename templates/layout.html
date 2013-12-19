@@ -1,9 +1,10 @@
+{%- import '_helpers.html' as t -%}
 <!doctype html>
-<html>
+<html ng-app="piggyBankApp">
     <head>
         <meta charset="utf-8" />
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" type="text/css" />
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/application.css') }}" type="text/css" />
+        {{ t.css('css/bootstrap.min.css') }}
+        {{ t.css('css/application.css') }}
         <script type="text/javascript">
             function url_for(endpoint) {
                 return '{{ request.url_root }}' + endpoint;
@@ -23,7 +24,8 @@
             {% block content %}{% endblock %}
         </div>        
 
-        <script type="text/javascript" src="{{ url_for('static', filename='js/jquery-2.0.2.min.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='js/application.js') }}"></script>
+        {{ t.js('js/jquery-2.0.2.min.js') }}
+        {{ t.js('js/angular.min.js') }}
+        {{ t.js('js/application.js') }}
     </body>
 </html>
